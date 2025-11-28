@@ -7,33 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Property extends Model
 {
-    use HasFactory;
-
+    /** @use HasFactory<\Database\Factories\PropertyFactory> */
+    protected $primaryKey = 'property_id';
     protected $fillable = [
-        'user_id',
-        'photo',
-        'title',
-        'summary',
-        'price',
-        'city',
-        'state',
-        'country',
-        'bed_room',
-        'bath_room',
-        'area_l',
-        'area_w',
-        'area_total',
-    ];
-    
-    // 1 property belongs to 1 user
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+          'photo',
+          'owner_name',
+          'price',
+          'city',
+          'state',
+          'country',
+          'bed_room',
+          'bath_room',
+          'summary',
+          'area_l',
+          'area_w',
+          'review',
+      ];
 
-    // 1 property punya banyak user
-    public function favorites()
-    {
-        return $this->hasMany(Favorite::class);
-    }
+    use HasFactory;
 }

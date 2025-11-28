@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top p-3 border border-2">
   <div class="container-fluid">
 
-    <a class="navbar-brand fw-bolder" href="/">Home<span class="text-primary">Finder</span></a>
+    <a class="navbar-brand fw-bolder" href="/property">Home<span class="text-primary">Finder</span></a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
