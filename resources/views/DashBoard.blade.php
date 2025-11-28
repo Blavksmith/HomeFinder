@@ -29,7 +29,10 @@
 
 <!-- { Recently Added }} -->
 <section class="container py-5">
-    <h2 class="fw-bold mb-4">Recently Added</h2>
+    <div class="position-relative mb-5 p-3">
+        <h2 class="fw-bold mb-4 position-absolute start-0">Recently Added</h2>
+        <a href="" class="position-absolute end-0 btn btn-primary">Add Property</a>
+    </div>
 
     <div class="row g-4">
         @foreach($property as $prop)
