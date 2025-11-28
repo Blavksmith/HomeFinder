@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Property;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class AuthController extends Controller
 {
+
+    public function dashboard(){
+
+        $property = Property::latest()->take(8)->get();
+        return view('DashBoard', compact('property'));
+    
+    }
+
     // login form
     public function showLoginForm()
     {
@@ -50,7 +59,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/dashboard')->with('success', 'Akun berhasil dibuat!');
+        return redirect('/property')->with('success', 'Akun berhasil dibuat!');
     }
 
     public function logout()

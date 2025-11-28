@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Favorite extends Model
 {
@@ -14,13 +14,15 @@ class Favorite extends Model
         'property_id'
     ];
 
-    // Favorite milik User
+    /* RELATIONSHIPS */
+
+    // Favorit dimiliki oleh 1 user
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Favorite milik Property
+    // Favorit terkait ke 1 property
     public function property()
     {
         return $this->belongsTo(Property::class);

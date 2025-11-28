@@ -1,95 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('template')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HomeFinder</title>
+@section('content')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{{-- HERO SECTION --}}
+<section class="py-5 bg-light border-bottom">
+    <div class="container text-center">
 
-    <link rel="stylesheet" href="{{ asset('css/DashBoard.css') }}" />
+        <h1 class="fw-bold display-5 mb-3">
+            The easiest way to find <br>
+            <span class="text-primary">your perfect property</span>
+        </h1>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
+        <p class="text-muted mb-4">Find homes, apartments, and commercial properties in seconds.</p>
 
-<body style="font-family: 'Inter', sans-serif;">
+        <div class="row justify-content-center g-2">
+            <div class="col-12 col-md-3">
+                <input type="text" class="form-control form-control-lg" placeholder="📍 City (Batam, Pekanbaru)">
+            </div>
+            <div class="col-12 col-md-3">
+                <select class="form-select form-select-lg">
+                    <option>🏠 Rent</option>
+                    <option>💰 Buy</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+                <button class="btn btn-primary btn-lg">🔍 Search</button>
+            </div>
+        </div>
 
-    <!-- {{-- Navbar --}} -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="{{ url('/') }}">
-                Home<span class="text-dark">Finder</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    </div>
+</section>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto me-4">
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/properties') }}">Properties</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/services') }}">Services</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/about') }}">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
-                </ul>
-                <div class="d-flex">
-                    <a href="{{ url('/login') }}" class="btn btn-outline-primary me-2">Sign In</a>
-                    <a href="{{ url('/get-started') }}" class="btn btn-primary">Get Started</a>
+
+
+{{-- CATEGORIES --}}
+<section class="container py-5">
+    <h2 class="fw-bold text-center mb-4">Browse Categories</h2>
+
+    <div class="row g-4 text-center">
+        @foreach (['Perumahan', 'Apartemen', 'Ruko', 'Gedung'] as $category)
+        <div class="col-6 col-md-3">
+            <div class="p-4 rounded-4 border bg-white shadow-sm hover-shadow transition"
+                 style="cursor:pointer;">
+                <div class="fs-4 fw-bold text-primary mb-2">
+                    {{ $category }}
                 </div>
+                <small class="text-muted">Lihat semua properti</small>
             </div>
         </div>
-    </nav>
+        @endforeach
+    </div>
+</section>
 
-    <!-- {{-- Hero Section --}} -->
-    <section class="text-center py-5 bg-light">
-        <div class="container">
-            <h1 class="fw-bold mb-4">The easiest way to find<br><span class="text-primary">your perfect property</span></h1>
 
-            <div class="d-flex justify-content-center gap-2">
-                <input type="text" class="form-control w-auto" placeholder="📍 Batam, Pekanbaru, etc.">
-                <input type="text" class="form-control w-auto" placeholder="🏠 Rent / Buy">
-                <button class="btn btn-primary">🔍</button>
-            </div>
-        </div>
-    </section>
 
-    <!--Categories  -->
-    <section class="container py-5 text-center">
-        <div class="row g-3">
-            @foreach (['Perumahan', 'Apartemen', 'Ruko', 'Gedung'] as $category)
-                <div class="col-6 col-md-3">
-                    <div class="border rounded-3 py-4 bg-primary-subtle fw-semibold">
-                        {{ $category }}
+{{-- RECENTLY ADDED --}}
+<section class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Recently Added</h2>
+        <a href="#" class="text-decoration-none fw-semibold">See all →</a>
+    </div>
+
+    <div class="row g-4">
+        @foreach($property as $prop)
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+
+            <a href="{{ route('property.show', $prop) }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+
+                    {{-- Photo --}}
+                    <div class="ratio ratio-4x3">
+                        <img src="{{ $prop->photo }}"
+                             class="w-100 h-100 object-fit-cover"
+                             alt="Property {{ $prop->city }}">
                     </div>
-                </div>
-            @endforeach
-        </div>
-    </section>
 
-    <!-- { Recently Added }} -->
-    <section class="container py-5">
-        <h2 class="fw-bold mb-4">Recently Added</h2>
+                    {{-- Card Body --}}
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-dark mb-1">{{ $prop->city }}, {{ $prop->country }}</h5>
 
-        <div class="row g-4">
-            @for ($i = 0; $i < 6; $i++)
-                <div class="col-12 col-md-4">
-                    <div class="card shadow-sm border-0">
-                        <div class="ratio ratio-4x3 bg-secondary-subtle rounded-top"></div>
-                        <div class="card-body">
-                            <h5 class="card-title">Jalan 1234, Jakarta Selatan</h5>
-                            <p class="card-text text-muted">5 Kamar • 200 m²</p>
-                            <div class="d-flex justify-content-between">
-                                <span>👤 Agen</span>
-                                <span class="fw-semibold text-primary">Rp. 3,25 M</span>
-                            </div>
+                        <p class="text-muted small mb-2">
+                            🛏 {{ $prop->bed_room }} Beds ·
+                            🛁 {{ $prop->bath_room }} Baths ·
+                            📐 {{ $prop->area_total }} m²
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                            <span class="small text-secondary">👤 Agent</span>
+                            <span class="fw-bold text-primary">
+                                Rp {{ number_format($prop->price, 0, ',', '.') }}
+                            </span>
                         </div>
                     </div>
+
                 </div>
-            @endfor
+            </a>
+
         </div>
-    </section>
+        @endforeach
+    </div>
 
+</section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

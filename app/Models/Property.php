@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Property extends Model
 {
@@ -11,32 +11,27 @@ class Property extends Model
 
     protected $fillable = [
         'user_id',
-        'judul',
-        'deskripsi',
-        'harga',
-        'lokasi',
-        'tipe',
-        'luas_tanah',
-        'luas_bangunan',
-        'jumlah_kamar',
-        'jumlah_kamar_mandi',
-        'image_cover',
-        'status'
+        'photo',
+        'title',
+        'summary',
+        'price',
+        'city',
+        'state',
+        'country',
+        'bed_room',
+        'bath_room',
+        'area_l',
+        'area_w',
+        'area_total',
     ];
-
-    // Property dimiliki oleh 1 User
+    
+    // 1 property belongs to 1 user
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Property memiliki banyak gambar
-    public function images()
-    {
-        return $this->hasMany(PropertyImage::class);
-    }
-
-    // Property memiliki banyak favorit
+    // 1 property punya banyak user
     public function favorites()
     {
         return $this->hasMany(Favorite::class);
