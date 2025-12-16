@@ -18,16 +18,19 @@ class FavoriteController extends Controller
     }
 
     public function store(Property $property) {
-        $user = Auth::user();
+        // $user = Auth::user();
 
-        if (!$user->favorites()->wherePivot('property_id', $property->property_id)->exists()) {
-            // echo 'tidak ada';
-            $user->favorites()->attach($property->property_id);
-            return redirect()->route('showFavorite');
-        }
-        else {
-            echo 'property sudah ada di favorite';
-        }
+        // if (!$user->favorites()->wherePivot('property_id', $property->property_id)->exists()) {
+        //     // echo 'tidak ada';
+        //     $user->favorites()->attach($property->property_id);
+        //     return redirect()->route('showFavorite');
+        // }
+
+        auth()->user()
+            ->favorites()
+            ->syncWithoutDetaching([$property->property_id]);
+
+        return back();
         
     }
 

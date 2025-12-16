@@ -7,15 +7,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\PageController;
 
 
 // landing & dashboard
 Route::get('/', [DashboardController::class, 'index'])
     ->name('dashboard');
 
-// property
-Route::resource('property', PropertyController::class)
-    ->only(['index', 'show']);
 
 
 // role: user middleware
@@ -32,6 +30,13 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/payment/{id}', [PropertyController::class, 'payment'])->name('payment');
 
     Route::post('/payment/{id}', [PropertyController::class, 'purchase'])->name('checkout');
+
+    // property
+    Route::resource('/property', PropertyController::class)
+        ->only(['index', 'show']);
+
+    // list property    
+    Route::get('/properties', [PropertyController::class, 'list'])->name('properties.list');
     
 });
 
@@ -66,3 +71,14 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+
+// Navbar page:     
+Route::get('/services', [PageController::class, 'services']);
+Route::get('/about', [PageController::class, 'about']);
+Route::get('/contact', function () {
+    return view('pages.contact');
+});
+Route::post('/contact', [PageController::class, 'submitContact'])
+    ->name('contact.submit');

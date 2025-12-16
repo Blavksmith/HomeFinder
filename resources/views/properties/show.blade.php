@@ -1,33 +1,40 @@
-@extends('template')
+@extends('layouts.Layout')
+
+@section('navbar')
+@include('components.navbar')
+@endsection
 
 @section('content')
 
 <main class="container py-5">
 
-    <!-- Property Detail -->
+    <!-- ================= PROPERTY HEADER ================= -->
     <div class="row g-4 align-items-start mb-5">
 
-        <!-- Image -->
+        <!-- IMAGE -->
         <div class="col-lg-6">
             <img
-                src="{{ $property->photo }}"
-                class="img-fluid rounded-3 shadow-sm"
+                src="{{ $property->photo ?? 'https://via.placeholder.com/800x500' }}"
+                class="img-fluid rounded-3 shadow-sm w-100"
                 alt="{{ $property->title }}">
         </div>
 
-        <!-- Right Section -->
+        <!-- RIGHT INFO -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4">
 
-                    <h2 class="text-primary fw-bold">
-                        Rp. {{ number_format($property->price, 0, ',', '.') }}
+                    <!-- PRICE -->
+                    <h2 class="text-primary fw-bold mb-1">
+                        Rp {{ number_format($property->price, 0, ',', '.') }}
                     </h2>
 
+                    <!-- BED & BATH -->
                     <p class="text-muted mb-2">
-                        {{ $property->bed_room }} bed room & {{ $property->bath_room }} bath room
+                        {{ $property->bed_room }} Bedroom • {{ $property->bath_room }} Bathroom
                     </p>
 
+                    <!-- TITLE & LOCATION -->
                     <p class="fw-semibold mb-4">
                         {{ $property->title }} <br>
                         <span class="text-muted fs-6">
@@ -35,7 +42,29 @@
                         </span>
                     </p>
 
-                    <!-- Image Buttons Placeholder (optional) -->
+                    <!-- KEY FEATURES -->
+                    <div class="row g-3 mb-4 text-center">
+                        <div class="col-4">
+                            <div class="border rounded-3 py-3">
+                                <div class="fw-semibold">{{ $property->area_total }} m²</div>
+                                <small class="text-muted">Total Area</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded-3 py-3">
+                                <div class="fw-semibold">{{ $property->bed_room }}</div>
+                                <small class="text-muted">Bedrooms</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded-3 py-3">
+                                <div class="fw-semibold">{{ $property->bath_room }}</div>
+                                <small class="text-muted">Bathrooms</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IMAGE BUTTONS -->
                     <div class="row g-2 mb-4">
                         @foreach(['Tampak Depan', 'Tampak Belakang', 'Samping Kiri', 'Samping Kanan'] as $btn)
                         <div class="col-6">
@@ -46,7 +75,7 @@
                         @endforeach
                     </div>
 
-                    <!-- Action Buttons -->
+                    <!-- ACTION BUTTONS -->
                     <div class="d-grid gap-2">
                         <button class="btn btn-primary fw-semibold">
                             Purchase this Property
@@ -59,9 +88,10 @@
                 </div>
             </div>
         </div>
+
     </div>
 
-    <!-- Summary -->
+    <!-- ================= SUMMARY ================= -->
     <section class="mb-5">
         <h3 class="fw-semibold mb-3">Summary</h3>
         <p class="text-secondary lh-lg">
@@ -69,8 +99,21 @@
         </p>
     </section>
 
-    <!-- Property Info -->
-    <section class="row g-3">
+    <!-- ================= HIGHLIGHTS ================= -->
+    <section class="mb-5">
+        <h4 class="fw-semibold mb-3">Property Highlights</h4>
+        <div class="row g-3 text-muted">
+            <div class="col-md-4">✔ Strategis & akses mudah</div>
+            <div class="col-md-4">✔ Lingkungan aman & nyaman</div>
+            <div class="col-md-4">✔ Cocok untuk keluarga</div>
+            <div class="col-md-4">✔ Dekat pusat kota</div>
+            <div class="col-md-4">✔ Nilai investasi tinggi</div>
+            <div class="col-md-4">✔ Bebas banjir</div>
+        </div>
+    </section>
+
+    <!-- ================= PROPERTY INFO ================= -->
+    <section class="row g-4 mb-5">
 
         <div class="col-md-3 col-sm-6">
             <div class="card text-center h-100">
@@ -97,9 +140,9 @@
         <div class="col-md-3 col-sm-6">
             <div class="card text-center h-100">
                 <div class="card-body">
-                    <p class="text-muted mb-1">Review</p>
+                    <p class="text-muted mb-1">Rating</p>
                     <h5 class="fw-semibold">
-                        {{ rand(40, 49) / 10 }} ⭐
+                        {{ rand(40,49) / 10 }} ⭐
                     </h5>
                 </div>
             </div>
@@ -108,12 +151,24 @@
         <div class="col-md-3 col-sm-6">
             <div class="card text-center h-100">
                 <div class="card-body">
-                    <p class="text-muted mb-1">Kamar Tidur</p>
+                    <p class="text-muted mb-1">Bedrooms</p>
                     <h5 class="fw-semibold">{{ $property->bed_room }}</h5>
                 </div>
             </div>
         </div>
 
+    </section>
+
+    <!-- ================= LOCATION ================= -->
+    <section class="mb-5">
+        <h4 class="fw-semibold mb-3">Location</h4>
+
+        <div class="ratio ratio-16x9 rounded-3 overflow-hidden shadow-sm">
+            <iframe
+                src="https://maps.google.com/maps?q={{ urlencode($property->city) }}&z=13&output=embed"
+                loading="lazy">
+            </iframe>
+        </div>
     </section>
 
 </main>

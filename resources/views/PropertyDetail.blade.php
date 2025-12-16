@@ -1,80 +1,202 @@
 @extends('layouts.Layout')
 
 @section('navbar')
-    @include('components.Navbar')
+    @include('components.navbar')
 @endsection
 
 @section('content')
-<div class="container py-5">
-    <!-- Property Detail -->
-    <div class="row g-4 align-items-start mb-5">
+    <main class="container py-5">
+        <div class="row g-4 align-items-start mb-5">
 
-        <!-- Image -->
-        <div class="col-lg-6">
-            <img
-                src="{{ $prop->photo }}"
-                class="img-fluid rounded-3"
-                alt="Property Image">
-        </div>
+            {{-- image --}}
+            <div class="col-lg-6">
+                <img src="{{ $property->photo ?? 'https://via.placeholder.com/800x500' }}"
+                    class="img-fluid rounded-3 shadow-sm w-100" alt="{{ $property->title }}">
+            </div>
 
-        <!-- Right Section -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
+            {{-- property info --}}
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
 
-                    <h2 class="text-primary fw-bold">Rp. {{ number_format($prop->price, 0, ',', '.') }}</h2>
-                    <p class="text-muted mb-2">{{ $prop->bed_room }} bed • {{ $prop->bath_room }} bath</p>
+                        <h2 class="text-primary fw-bold mb-1">
+                            Rp {{ number_format($property->price, 0, ',', '.') }}
+                        </h2>
 
-                    <p class="fw-semibold mb-4">
-                        {{ $prop->owner_name }} <br>
-                        <span class="text-muted fs-6">{{ $prop->city }}, {{ $prop->country }}</span>
-                    </p>
+                        <p class="text-muted mb-2">
+                            Owner: {{ $property->owner_name }}
+                        </p>
 
-                    
-                    <!-- Action Buttons -->
-                    <div class="d-flex w-100 gap-2">
-                        <form action="{{ route('favorite.store', $prop->property_id) }}" method="post" class="w-25">
-                            @csrf
-                            <button class="btn btn-outline-secondary w-100 fw-semibold">
-                                Add to Favorite
-                            </button>
-                        </form>
-                        <a href="{{ route('payment', $prop->property_id) }}" class="btn btn-primary flex-grow-1">Purchase this Property</a>
+
+                        <p class="fw-semibold mb-4">
+                            {{ $property->title }} <br>
+                            <span class="text-muted fs-6">
+                                {{ $property->city }}, {{ $property->country }}
+                            </span>
+                        </p>
+
+
+                        <div class="row g-3 mb-4 text-center">
+                            <div class="col-4">
+                                <div class="border rounded-3 py-3">
+                                    <div class="fw-semibold">{{ $property->area_total }} m²</div>
+                                    <small class="text-muted">Total Area</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded-3 py-3">
+                                    <div class="fw-semibold">{{ number_format($property->bed_room, 0) }}</div>
+                                    <small class="text-muted">Bedrooms</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded-3 py-3">
+                                    <div class="fw-semibold">{{ number_format($property->bath_room, 0) }}</div>
+                                    <small class="text-muted">Bathrooms</small>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {{-- Bagian purchase & favorites --}}
+                        <div class="d-grid gap-2">
+                            <a href="{{ route('payment', $property->property_id) }}" class="btn btn-primary fw-semibold">
+                                Purchase this Property
+                            </a>
+
+
+                            @php
+                                $isFavorite =
+                                    auth()->check() &&
+                                    auth()->user()->role === 'user' &&
+                                    auth()->user()->favorites->contains($property->property_id);
+                            @endphp
+                            {{-- FAVORITE (USER ONLY) --}}
+                            @auth
+                                @if (auth()->user()->role === 'user')
+                                    @if (!$isFavorite)
+                                        <form action="{{ route('favorite.store', $property) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-outline-danger fw-semibold w-100">
+                                                Add to Favorite
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('favorite.remove', $property) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger fw-semibold w-100">
+                                                Remove from Favorite
+                                            </button>
+                                        </form>
+                                    @endif
+                                @endif
+                            @endauth
+
+                            {{-- GUEST --}}
+                            @guest
+                                <a href="{{ route('login') }}" class="btn btn-outline-secondary fw-semibold">
+                                    Login to add favorite
+                                </a>
+                            @endguest
+                        </div>
+
                     </div>
-
                 </div>
             </div>
+
         </div>
-    </div>
 
-    <!-- Summary -->
-    <section class="mb-5">
-        <h3 class="fw-semibold mb-3">Summary</h3>
-        <p class="text-secondary lh-lg">
-            {{ $prop->summary }}
-        </p>
-    </section>
+        {{-- summary --}}
+        <section class="mb-5">
+            <h3 class="fw-semibold mb-3">Summary</h3>
+            <p class="text-secondary lh-lg">
+                {{ $property->summary }}
+            </p>
+        </section>
 
-    <!-- Property Info -->
-    <section class="row g-3">
-        <div class="col-md-3 col-sm-6">
-            <div class="card text-center h-100">
-                <div class="card-body">
-                    <p class="text-muted mb-1">Luas</p>
-                    <h5 class="fw-semibold">{{ $prop->area_l }}m x {{ $prop->area_w }}m</h5>
+
+        {{-- bagian hgihlights --}}
+        <section class="my-5">
+            <div class="row g-4 text-center mb-8 mt-8">
+                @foreach (collect([['icon' => '📍', 'title' => 'Lokasi Strategis', 'desc' => 'Akses mudah ke berbagai area penting'], ['icon' => '🛡️', 'title' => 'Lingkungan Aman', 'desc' => 'Keamanan terjaga dan nyaman'], ['icon' => '👨‍👩‍👧', 'title' => 'Ramah Keluarga', 'desc' => 'Ideal untuk hunian keluarga'], ['icon' => '🏙️', 'title' => 'Dekat Pusat Kota', 'desc' => 'Mobilitas cepat & efisien'], ['icon' => '📈', 'title' => 'Investasi Menjanjikan', 'desc' => 'Nilai properti terus meningkat'], ['icon' => '🌊', 'title' => 'Bebas Banjir', 'desc' => 'Lingkungan aman dari banjir']])->shuffle()->take(3) as $item)
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card h-100 border-0 shadow-sm rounded-4">
+                            <div class="card-body p-4">
+                                <div class="fs-1 mb-3">{{ $item['icon'] }}</div>
+                                <h6 class="fw-semibold mb-2">{{ $item['title'] }}</h6>
+                                <p class="text-muted small mb-0">
+                                    {{ $item['desc'] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
+
+
+
+        {{-- Info card property --}}
+        <section class="row g-4 mb-5">
+
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-1">Dimensi</p>
+                        <h5 class="fw-semibold">
+                            {{ $property->area_l }}m × {{ $property->area_w }}m
+                        </h5>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-3 col-sm-6">
-            <div class="card text-center h-100">
-                <div class="card-body">
-                    <p class="text-muted mb-1">Review</p>
-                    <h5 class="fw-semibold">⭐ {{ $prop->review }}/10</h5>
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-1">Luas Total</p>
+                        <h5 class="fw-semibold">
+                            {{ $property->area_total }} m²
+                        </h5>
+                    </div>
                 </div>
             </div>
-        </div>
 
-    </section>
-</div>
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-1">Rating</p>
+                        <h5 class="fw-semibold">
+                            {{ rand(40, 49) / 10 }} ⭐
+                        </h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-1">Bedrooms</p>
+                        <h5 class="fw-semibold">{{ number_format($property->bed_room, 0) }}</h5>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+
+        {{-- Lokasi map --}}
+        <section class="mb-5">
+            <h4 class="fw-semibold mb-3">Location</h4>
+
+            <div class="ratio ratio-16x9 rounded-3 overflow-hidden shadow-sm">
+                <iframe src="https://maps.google.com/maps?q={{ urlencode($property->city) }}&z=13&output=embed"
+                    loading="lazy">
+                </iframe>
+            </div>
+        </section>
+
+    </main>
 @endsection

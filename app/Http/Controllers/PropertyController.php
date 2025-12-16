@@ -16,8 +16,8 @@ class PropertyController extends Controller
 
     public function show($id)
     {
-        $prop = Property::findOrFail($id);
-        return view('PropertyDetail', compact('prop'));
+        $property = Property::findOrFail($id);
+        return view('PropertyDetail', compact('property'));
     }
 
     public function create()
@@ -95,4 +95,16 @@ class PropertyController extends Controller
         $property->update(['user_id' => Auth::user()->user_id]);
         return redirect()->route('dashboard');
     }
+
+    public function list(Request $request)
+{
+    $properties = Property::when($request->search, function ($query, $search) {
+        $query->where('city', 'like', "%{$search}%");
+    })
+    ->latest()
+    ->get();
+
+    return view('pages.properties', compact('properties'));
+}
+
 }
